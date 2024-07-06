@@ -1,13 +1,17 @@
 <template>
   <v-row class="pb-5">
-    <v-col cols="4">
+    <v-col cols="4" class="d-flex align-center justify-start">
       <span class="text--bold">{{ label }}</span>
+      <v-tooltip v-if="infoText" bottom>
+        <template #activator="{ on, attrs }">
+          <v-icon small class="ml-2" v-bind="attrs" v-on="on">
+            mdi-information-outline
+          </v-icon>
+        </template>
+        <span>{{ infoText }}</span>
+      </v-tooltip>
     </v-col>
-    <v-col
-      cols="6"
-      :class="getColClass()"
-      @click="clicked"
-    >
+    <v-col cols="6" :class="getColClass()" @click="clicked">
       <template v-if="editing && editable">
         <v-autocomplete
           v-if="suggestedValues.length > 0 && strict"
@@ -55,24 +59,31 @@
             <v-btn
               text
               color="primary"
-              @click="menu = false; editing = false; revert();"
+              @click="
+                menu = false;
+                editing = false;
+                revert();
+              "
             >
               Cancel
             </v-btn>
             <v-btn
               text
               color="primary"
-              @click="menu = false; update();"
+              @click="
+                menu = false;
+                update();
+              "
             >
               OK
             </v-btn>
           </v-date-picker>
         </v-menu>
         <v-text-field
-          v-else-if="(dataType === 'string' || dataType === 'number')"
+          v-else-if="dataType === 'string' || dataType === 'number'"
           ref="field"
           v-model="internalValue"
-          style="margin-bottom: -45px;"
+          style="margin-bottom: -45px"
           :rules="rules"
           :label="label"
           :type="dataType === 'string' ? 'text' : 'number'"
@@ -83,13 +94,10 @@
           dense
           required
           @blur="update"
-          @keyup.enter="update"
+          @keyup.enter.native="update"
         />
       </template>
-      <span
-        v-else
-        class="ml-3"
-      >
+      <span v-else class="ml-3">
         {{ internalValue }}
       </span>
     </v-col>
@@ -97,12 +105,12 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import moment from 'moment';
+import { mapState } from "pinia";
+import moment from "moment";
+import { useApplicationStore } from "@/stores/application-module";
 
 export default {
-  components: {
-  },
+  components: {},
   props: {
     editable: {
       type: Boolean,
@@ -114,11 +122,15 @@ export default {
     },
     value: {
       type: [String, Number],
-      default: '',
+      default: "",
+    },
+    infoText: {
+      type: String,
+      default: "",
     },
     dataType: {
       type: String,
-      default: 'string',
+      default: "string",
     },
     suggestedValues: {
       type: Array,
@@ -138,7 +150,7 @@ export default {
       internalValue: this.value,
       editing: false,
       menu: false,
-      original: '',
+      original: "",
       moment,
     };
   },
@@ -146,13 +158,11 @@ export default {
     dirty() {
       return this.original !== this.internalValue;
     },
-    ...mapGetters({
-      isDarkMode: 'application/isDarkMode',
-    }),
+    ...mapState(useApplicationStore, ["darkMode"]),
   },
   watch: {
     internalValue(val) {
-      this.$emit('input', val);
+      this.$emit("input", val);
     },
   },
   mounted() {
@@ -163,7 +173,7 @@ export default {
       if (!this.editable) return;
       this.editing = true;
       this.$nextTick(() => {
-        if (this.dataType === 'date' || this.dataType === 'date-range') {
+        if (this.dataType === "date" || this.dataType === "date-range") {
           this.menu = true;
         } else {
           this.$refs.field.focus();
@@ -175,35 +185,35 @@ export default {
         return;
       }
 
-      if (this.label === 'Delay') {
+      if (this.label === "Delay") {
         this.internalValue = Math.floor(this.internalValue);
-      } else if (this.label === 'Jitter') {
+      } else if (this.label === "Jitter") {
         // truncate to 1 decimal place
         this.internalValue = Math.floor(this.internalValue * 10) / 10;
       }
       await this.$nextTick();
 
       this.editing = false;
-      this.$emit('update');
+      this.$emit("update");
     },
     revert() {
       this.editing = false;
       this.internalValue = this.original;
     },
     async clear() {
-      this.internalValue = '';
+      this.internalValue = "";
       await this.$nextTick();
       this.editing = false;
-      this.$emit('update');
+      this.$emit("update");
     },
     getColClass() {
       if (this.editing === false && this.editable === true) {
-        if (this.isDarkMode) {
-          return 'column-not-editing-dark';
+        if (this.darkMode) {
+          return "column-not-editing-dark";
         }
-        return 'column-not-editing';
+        return "column-not-editing";
       }
-      return '';
+      return "";
     },
   },
 };
@@ -212,15 +222,15 @@ export default {
 <style>
 .column-not-editing {
   background-color: rgb(0, 0, 0, 0.1);
-  border-radius:5px;
-  height:45px;
+  border-radius: 5px;
+  height: 45px;
   cursor: pointer;
 }
 
 .column-not-editing-dark {
   background-color: rgb(255, 255, 255, 0.1);
-  border-radius:5px;
-  height:45px;
+  border-radius: 5px;
+  height: 45px;
   cursor: pointer;
 }
 </style>

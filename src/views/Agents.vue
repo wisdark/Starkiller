@@ -1,38 +1,38 @@
 <template>
   <div>
-    <portal
-      to="app-bar-extension"
-    >
-      <div style="display: flex; flex-direction: row; width:100%">
-        <v-tabs
-          v-model="tab"
-          align-with-title
-        >
-          <v-tab
-            key="list-view"
-            href="#list-view"
-          >
+    <portal to="app-bar-extension">
+      <div style="display: flex; flex-direction: row; width: 100%">
+        <v-tabs v-model="tab" align-with-title>
+          <v-tab key="list-view" href="#list-view">
             List
-            <v-icon x-small class="ml-1">
-              fa-list
-            </v-icon>
+            <v-icon x-small class="ml-1"> fa-list </v-icon>
+          </v-tab>
+          <v-tab key="tasks" href="#tasks">
+            Tasks
+            <v-icon x-small class="ml-1"> fa-sticky-note </v-icon>
           </v-tab>
         </v-tabs>
       </div>
     </portal>
-    <v-tabs-items
-      v-model="tab"
-    >
+    <v-tabs-items v-model="tab">
       <v-tab-item
         key="list-view"
         :value="'list-view'"
         :transition="false"
         :reverse-transition="false"
       >
-        <v-card
-          flat
-        >
+        <v-card flat>
           <agents-list :active="tab === 'list-view'" />
+        </v-card>
+      </v-tab-item>
+      <v-tab-item
+        key="tasks"
+        :value="'tasks'"
+        :transition="false"
+        :reverse-transition="false"
+      >
+        <v-card flat>
+          <agent-tasks-list :active="tab === 'tasks'" :use-header="true" />
         </v-card>
       </v-tab-item>
     </v-tabs-items>
@@ -40,16 +40,17 @@
 </template>
 
 <script>
-import AgentsList from '@/components/agents/AgentsList.vue';
+import AgentsList from "@/components/agents/AgentsList.vue";
+import AgentTasksList from "@/components/agents/AgentTasksList.vue";
 
 export default {
-  name: 'Agents',
+  name: "Agents",
   components: {
     AgentsList,
+    AgentTasksList,
   },
   data() {
-    return {
-    };
+    return {};
   },
   computed: {
     // https://jareklipski.medium.com/linking-to-a-specific-tab-in-vuetify-js-d978525f2e1a
@@ -58,7 +59,7 @@ export default {
         this.$router.replace({ query: { ...this.$route.query, tab } });
       },
       get() {
-        return this.$route.query.tab || 'list-view';
+        return this.$route.query.tab || "list-view";
       },
     },
   },
@@ -67,13 +68,12 @@ export default {
 
 <style lang="scss">
 .warning-row {
-  background-color: #FFCCCC;
+  background-color: #ffcccc;
 }
 
-.v-data-table.theme--dark
-  .warning-row {
-    background-color: #bd4c4c;
-  }
+.v-data-table.theme--dark .warning-row {
+  background-color: #bd4c4c;
+}
 
 // Overrides vuetify.css
 // Because we moved the tabs into a div, which made the color funky.

@@ -5,7 +5,168 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+**Added** for new features.
+**Changed** for changes in existing functionality.
+**Deprecated** for soon-to-be removed features.
+**Removed** for now removed features.
+**Fixed** for any bug fixes.
+**Security** in case of vulnerabilities.
+
 ## [Unreleased]
+
+## [2.8.1] - 2024-05-05
+
+### Fixed
+
+-   Fixed issue where plugin task responses were not being displayed
+
+## [2.8.0] - 2024-04-08
+
+### Added
+
+-   Added completed, error, continuous statuses to taskings
+
+## [2.7.3] - 2024-02-22
+
+### Added
+
+-   Added buttons to reload sysinfo to agents pages
+-   Add info button on View tab to clarify what options do
+
+### Changed
+
+-   Removed extra space being added in front of Task Input and Output by append/prepend new line
+-   Changed default sort on agents page to be "first seen" instead of "last seen"
+
+## [2.7.2] - 2024-01-31
+
+### Fixed
+
+-   Deleting agent from the action menu on the table now works
+
+## [2.7.1] - 2023-12-03
+
+### Changed
+
+-   Remove Interactive Agent Shell from README
+
+## [2.7.0] - 2023-11-15
+
+### Added
+
+-   Add agent dropdown when Agent is a field in a form
+-   Add auto-refresh on Agents / Agents Tasks page
+-   Add auto-refresh on Plugins Tasks page
+
+### Changed
+
+-   Migrate from Vuex to Pinia
+
+### Fixed
+
+-   Fix form dropdowns getting out of sync with reality by refreshing the store on load
+-   Making edits to an Agent on the 'View' tab now properly updates the parent Agent page
+-   Updating an agent's name no longer refreshes the page on submit
+-   After updating a stager, the download/clipboard of the stager now reflects the changes without requiring the page to be reloaded
+
+### Removed
+
+-   Remove unused AgentCommandViewer component
+
+## [2.6.1] - 2023-09-25
+
+-   Make notification bell menu scrollable with a max height
+-   Fix the Listener buttons overflowing out of the toolbar
+
+## [2.6.0] - 2023-09-17
+
+-   Add an Agent terminal to the Interact tab
+    -   Run modules and shell commands from a terminal-like interface
+-   Add Prettier for code formatting
+-   Add user avatar uploads to the settings page, use the avatars in the chat widget
+-   Add a notification page and notification bell
+    -   Most notifications that were previously showing in the bottom corner will now show up in the notification bell
+    -   Agent task results now show up as notifications
+    -   Can subscribe/unsubscribe to specific agent notifications
+
+## [2.5.3] - 2023-08-24
+
+-   Fix elevated process icon on agent page
+-   Fix input and output downloads not working
+
+## [2.5.2] - 2023-08-09
+
+-   Update the github issue templates to use forms
+-   Fix listener name update showing up on the list page
+-   Fix stager deletion from the ellipses menu
+-   Use a listener dropdown for RedirectListener on hop listeners
+
+## [2.5.1] - 2023-08-02
+
+-   Add a DateTimeDisplay component
+
+## [2.5.0] - 2023-07-25
+
+-   Downgrade sass to fix vuetify errors
+-   Fix credential dropdown on DynamicFormInput
+-   Refactor advanced filtering expansion panels to common components
+-   Refactor a bunch of the list pages so they use a shared component and adds the advanced filtering
+-   Refactor agent task api endpoints to another file
+-   Modules page has a lot of filtering options now
+-   Tag Management
+    -   Add a reusable Tag Manager component
+    -   Works on Listeners, Agents, Agent Tasks, Plugin Tasks, Credentials, and Downloads
+-   Display Empire version on the sidenav
+
+## [2.4.3] - 2023-07-21
+
+-   Fix issue with agent and plugin tasks table not loading
+
+## [2.4.2] - 2023-07-20
+
+## [2.4.1] - 2023-07-06
+
+-   Fix issue with bypasses not loading on form pages
+-   Fix issue with agent rename
+-   Fix tooltips on agent page not displaying
+-   Add ansi formatting to plugin and agent tasks
+-   Refactor plugin task table to match agent task table
+-   Dependency updates
+-   Add options to settings page for reloading profiles, modules, bypasses, and plugins
+
+## [2.4.0] - 2023-06-10
+
+-   Turn on auto-refresh for the agent page by default
+-   Refactoring Agent Task components
+-   Add preview of Sponsor dashboard feature
+-   Move malleable profiles under listeners
+-   Make agent id clickable from tasks table
+-   Fix issue with navigating to login page when already logged in
+
+## [2.3.2] - 2023-05-22
+
+-   Some improvements to the release flow
+
+## [2.3.1] - 2023-05-22
+
+## [2.3.0] - 2023-05-17
+
+-   Add a script import button to the agent page
+-   Add a script command checkbox to the agent page
+-   Modules with a 'file' type option now get a file selector/uploader instead of a text box
+
+## [2.2.0] - 2023-03-31
+
+-   Move Agent Tasks under the Agents page
+-   Add a Plugin Tasks view under the Plugins page
+-   Add a Plugin Tasks view under the Plugin Execution page
+
+## [2.1.1] - 2023-03-29
+
+## [2.1.0] - 2023-03-01
+
+-   Hide the module checkboxes if the module is not selected
+-   ESLint update - allow unused vars that start with an underscore
 
 ## [2.0.5] - 2023-02-20
 
@@ -131,7 +292,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.4.0] - 2020-10-12
 
--   Added real-time notifications new listeners and agents [#49](https://github.com/BC-SECURITY/Starkiller/pull/49) 
+-   Added real-time notifications new listeners and agents [#49](https://github.com/BC-SECURITY/Starkiller/pull/49)
 
 ## [1.3.2] - 2020-07-29
 
@@ -212,7 +373,51 @@ Including but not limited to:
 
 -   Initial Release
 
-[Unreleased]: https://github.com/BC-SECURITY/Starkiller-Sponsors/compare/v2.0.5...HEAD
+[Unreleased]: https://github.com/BC-SECURITY/Starkiller-Sponsors/compare/v2.8.1...HEAD
+
+[2.8.1]: https://github.com/BC-SECURITY/Starkiller-Sponsors/compare/v2.8.0...v2.8.1
+
+[2.8.0]: https://github.com/BC-SECURITY/Starkiller-Sponsors/compare/v2.7.3...v2.8.0
+
+[2.7.3]: https://github.com/BC-SECURITY/Starkiller-Sponsors/compare/v2.7.2...v2.7.3
+
+[2.7.2]: https://github.com/BC-SECURITY/Starkiller-Sponsors/compare/v2.7.1...v2.7.2
+
+[2.7.1]: https://github.com/BC-SECURITY/Starkiller-Sponsors/compare/v2.7.0...v2.7.1
+
+[2.7.0]: https://github.com/BC-SECURITY/Starkiller-Sponsors/compare/v2.6.1...v2.7.0
+
+[2.6.1]: https://github.com/BC-SECURITY/Starkiller-Sponsors/compare/v2.6.0...v2.6.1
+
+[2.6.0]: https://github.com/BC-SECURITY/Starkiller-Sponsors/compare/v2.5.3...v2.6.0
+
+[2.5.3]: https://github.com/BC-SECURITY/Starkiller-Sponsors/compare/v2.5.2...v2.5.3
+
+[2.5.2]: https://github.com/BC-SECURITY/Starkiller-Sponsors/compare/v2.5.1...v2.5.2
+
+[2.5.1]: https://github.com/BC-SECURITY/Starkiller-Sponsors/compare/v2.5.0...v2.5.1
+
+[2.5.0]: https://github.com/BC-SECURITY/Starkiller-Sponsors/compare/v2.4.3...v2.5.0
+
+[2.4.3]: https://github.com/BC-SECURITY/Starkiller-Sponsors/compare/v2.4.2...v2.4.3
+
+[2.4.2]: https://github.com/BC-SECURITY/Starkiller-Sponsors/compare/v2.4.1...v2.4.2
+
+[2.4.1]: https://github.com/BC-SECURITY/Starkiller-Sponsors/compare/v2.4.0...v2.4.1
+
+[2.4.0]: https://github.com/BC-SECURITY/Starkiller-Sponsors/compare/v2.3.2...v2.4.0
+
+[2.3.2]: https://github.com/BC-SECURITY/Starkiller-Sponsors/compare/v2.3.1...v2.3.2
+
+[2.3.1]: https://github.com/BC-SECURITY/Starkiller-Sponsors/compare/v2.3.0...v2.3.1
+
+[2.3.0]: https://github.com/BC-SECURITY/Starkiller-Sponsors/compare/v2.2.0...v2.3.0
+
+[2.2.0]: https://github.com/BC-SECURITY/Starkiller-Sponsors/compare/v2.1.1...v2.2.0
+
+[2.1.1]: https://github.com/BC-SECURITY/Starkiller-Sponsors/compare/v2.1.0...v2.1.1
+
+[2.1.0]: https://github.com/BC-SECURITY/Starkiller-Sponsors/compare/v2.0.5...v2.1.0
 
 [2.0.5]: https://github.com/BC-SECURITY/Starkiller-Sponsors/compare/v2.0.4...v2.0.5
 

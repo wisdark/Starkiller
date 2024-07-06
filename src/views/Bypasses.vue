@@ -25,41 +25,27 @@
     >
       <template #item.name="{ item }">
         <router-link
-          style="color: inherit;"
+          style="color: inherit"
           :to="{ name: 'bypassEdit', params: { id: item.id } }"
         >
           {{ item.name }}
         </router-link>
       </template>
       <template #item.updated_at="{ item }">
-        <v-tooltip top>
-          <template #activator="{ on }">
-            <span v-on="on">{{ moment(item.updated_at).fromNow() }}</span>
-          </template>
-          <span>{{ moment(item.updated_at).format('MMM D YYYY, h:mm:ss a') }}</span>
-        </v-tooltip>
+        <date-time-display :timestamp="item.updated_at" />
       </template>
       <template #item.actions="{ item }">
         <v-menu offset-y>
           <template #activator="{ on, attrs }">
-            <v-btn
-              text
-              icon
-              x-small
-              v-bind="attrs"
-              v-on="on"
-            >
+            <v-btn text icon x-small v-bind="attrs" v-on="on">
               <v-icon>fa-ellipsis-v</v-icon>
             </v-btn>
           </template>
           <v-list class="ml-2 mr-2">
-            <v-list-item
-              key="view"
-              link
-            >
+            <v-list-item key="view" link>
               <router-link
                 class="text-decoration-none"
-                style="color: inherit;"
+                style="color: inherit"
                 :to="{ name: 'bypassEdit', params: { id: item.id } }"
               >
                 <v-list-item-title>
@@ -79,11 +65,7 @@
               </v-list-item-title>
             </v-list-item>
             <v-divider class="pb-4" />
-            <v-list-item
-              key="delete"
-              link
-              @click="deleteBypass(item)"
-            >
+            <v-list-item key="delete" link @click="deleteBypass(item)">
               <v-list-item-title>
                 <v-icon>fa-trash-alt</v-icon>
                 Delete
@@ -97,39 +79,43 @@
 </template>
 
 <script>
-import moment from 'moment';
-import ListPageTop from '@/components/ListPageTop.vue';
-import { mapState } from 'vuex';
+import moment from "moment";
+import ListPageTop from "@/components/ListPageTop.vue";
+import DateTimeDisplay from "@/components/DateTimeDisplay.vue";
+import { useBypassStore } from "@/stores/bypass-module";
+import { mapState } from "pinia";
 
 export default {
-  name: 'Bypasses',
+  name: "Bypasses",
   components: {
+    DateTimeDisplay,
     ListPageTop,
   },
   data() {
     return {
       breads: [
         {
-          text: 'Bypasses',
+          text: "Bypasses",
           disabled: true,
-          href: '/bypasses',
+          href: "/bypasses",
         },
       ],
       headers: [
-        { text: 'Name', value: 'name' },
-        { text: 'Updated At', value: 'updated_at' },
-        { text: 'Actions', value: 'actions', sortable: false },
+        { text: "Name", value: "name" },
+        { text: "Updated At", value: "updated_at" },
+        { text: "Actions", value: "actions", sortable: false },
       ],
-      sortBy: 'name',
+      sortBy: "name",
       sortDesc: false,
       moment,
       selected: [],
     };
   },
   computed: {
-    ...mapState({
-      bypasses: (state) => state.bypass.bypasses,
-    }),
+    bypassStore() {
+      return useBypassStore();
+    },
+    ...mapState(useBypassStore, ["bypasses"]),
     showDelete() {
       return this.selected.length > 0;
     },
@@ -139,23 +125,35 @@ export default {
   },
   methods: {
     getBypasses() {
-      this.$store.dispatch('bypass/getBypasses');
+      this.bypassStore.getBypasses();
     },
     create() {
-      this.$router.push({ name: 'bypassNew' });
+      this.$router.push({ name: "bypassNew" });
     },
     view(item) {
-      this.$router.push({ name: 'bypassEdit', params: { id: item.id } });
+      this.$router.push({ name: "bypassEdit", params: { id: item.id } });
     },
     async deleteBypass(item) {
-      if (await this.$root.$confirm('Delete', `Are you sure you want to delete bypass ${item.name}?`, { color: 'red' })) {
-        this.$store.dispatch('bypass/deleteBypass', item.id);
+      if (
+        await this.$root.$confirm(
+          "Delete",
+          `Are you sure you want to delete bypass ${item.name}?`,
+          { color: "red" },
+        )
+      ) {
+        await this.bypassStore.deleteBypass(item.id);
       }
     },
     async deleteBypasses() {
-      if (await this.$root.$confirm('Delete', `Are you sure you want to delete ${this.selected.length} bypasses?`, { color: 'red' })) {
+      if (
+        await this.$root.$confirm(
+          "Delete",
+          `Are you sure you want to delete ${this.selected.length} bypasses?`,
+          { color: "red" },
+        )
+      ) {
         this.selected.forEach((bypass) => {
-          this.$store.dispatch('bypass/deleteBypass', bypass.id);
+          this.bypassStore.deleteBypass(bypass.id);
         });
       }
     },
@@ -163,5 +161,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

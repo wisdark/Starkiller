@@ -1,11 +1,10 @@
 <template>
-  <v-tooltip
-    bottom
-  >
+  <v-tooltip bottom>
     <template #activator="{ on }">
       <v-btn
         :color="flat ? '' : color"
         :to="to"
+        :disabled="disabled"
         class="mr-5"
         icon
         :small="!xSmall"
@@ -13,10 +12,8 @@
         v-on="on"
         @click="$emit('click')"
       >
-        <v-icon
-          :style="padLeft !== 0 ? `padding-left: ${padLeft}px` : ''"
-        >
-          {{ icon }}
+        <v-icon :style="padLeft !== 0 ? `padding-left: ${padLeft}px` : ''">
+          {{ icon }} {{ rotate ? "fa-spin" : "" }}
         </v-icon>
       </v-btn>
     </template>
@@ -26,7 +23,7 @@
 
 <script>
 export default {
-  name: 'TooltipButton',
+  name: "TooltipButton",
   props: {
     icon: {
       type: String,
@@ -42,7 +39,7 @@ export default {
     },
     color: {
       type: String,
-      default: '',
+      default: "",
     },
     flat: {
       type: Boolean,
@@ -56,10 +53,21 @@ export default {
       type: Boolean,
       default: false,
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+    rotate: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  methods: {
+    style() {
+      return this.padLeft !== 0 ? `padding-left: ${this.padLeft}px` : "";
+    },
   },
 };
 </script>
 
-<style>
-
-</style>
+<style></style>

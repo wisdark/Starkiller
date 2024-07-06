@@ -5,10 +5,7 @@
     :readonly="readonly"
     @submit.prevent.native="submit"
   >
-    <v-row
-      v-for="field in requiredFields"
-      :key="field.name"
-    >
+    <v-row v-for="field in requiredFields" :key="field.name">
       <v-col cols="6">
         <dynamic-form-input
           v-model="form[field.name]"
@@ -27,14 +24,8 @@
     <v-subheader v-if="optionalFields.length > 0">
       Optional Fields
     </v-subheader>
-    <v-divider
-      v-if="optionalFields.length > 0"
-      class="mb-8"
-    />
-    <v-row
-      v-for="field in optionalFields"
-      :key="field.name"
-    >
+    <v-divider v-if="optionalFields.length > 0" class="mb-8" />
+    <v-row v-for="field in optionalFields" :key="field.name">
       <v-col cols="6">
         <dynamic-form-input
           v-model="form[field.name]"
@@ -53,9 +44,13 @@
 </template>
 
 <script>
-import Vue from 'vue';
-import { mapGetters } from 'vuex';
-import DynamicFormInput from './DynamicFormInput.vue';
+import Vue from "vue";
+import { useListenerStore } from "@/stores/listener-module";
+import { useBypassStore } from "@/stores/bypass-module";
+import { useCredentialStore } from "@/stores/credential-module";
+import { useMalleableProfileStore } from "@/stores/malleable-module";
+import { useAgentStore } from "@/stores/agent-module";
+import DynamicFormInput from "./DynamicFormInput.vue";
 
 export default {
   components: {
@@ -82,12 +77,36 @@ export default {
     };
   },
   computed: {
-    ...mapGetters({
-      listeners: 'listener/listenerNames',
-      bypasses: 'bypass/bypassNames',
-      malleableProfiles: 'malleable/profileNames',
-      credentials: 'credential/credentials',
-    }),
+    agentStore() {
+      return useAgentStore();
+    },
+    listenerStore() {
+      return useListenerStore();
+    },
+    bypassStore() {
+      return useBypassStore();
+    },
+    credentialStore() {
+      return useCredentialStore();
+    },
+    malleableProfileStore() {
+      return useMalleableProfileStore();
+    },
+    agents() {
+      return this.agentStore.agents;
+    },
+    listeners() {
+      return this.listenerStore.listenerNames;
+    },
+    bypasses() {
+      return this.bypassStore.bypassNames;
+    },
+    credentials() {
+      return this.credentialStore.credentials;
+    },
+    malleableProfiles() {
+      return this.malleableProfileStore.profileNames;
+    },
     /**
      * Fields that go in the "Optional" section
      */
@@ -110,16 +129,21 @@ export default {
      * their respective sections.
      */
     fields() {
-      const fields = Object.keys(this.options)
-        .map((key) => ({ name: key, ...this.options[key] }));
+      const fields = Object.keys(this.options).map((key) => ({
+        name: key,
+        ...this.options[key],
+      }));
 
-      this.priority.slice().reverse().forEach((item) => {
-        const index = fields.findIndex((f) => f.name === item);
-        if (index > -1) {
-          const fItem = fields.splice(index, 1)[0];
-          fields.unshift(fItem);
-        }
-      });
+      this.priority
+        .slice()
+        .reverse()
+        .forEach((item) => {
+          const index = fields.findIndex((f) => f.name === item);
+          if (index > -1) {
+            const fItem = fields.splice(index, 1)[0];
+            fields.unshift(fItem);
+          }
+        });
 
       return fields;
     },
@@ -131,7 +155,7 @@ export default {
         map[field.name] = [];
         if (field.required === true) {
           map[field.name].push(
-            (v) => (!!v || v === 0) || `${field.name} is required`,
+            (v) => !!v || v === 0 || `${field.name} is required`,
           );
         }
 
@@ -144,9 +168,9 @@ export default {
       handler(val) {
         const form2 = { ...val };
         if (form2.Bypasses) {
-          form2.Bypasses = form2.Bypasses.join(' ');
+          form2.Bypasses = form2.Bypasses.join(" ");
         }
-        this.$emit('input', form2);
+        this.$emit("input", form2);
       },
       deep: true,
     },
@@ -157,52 +181,54 @@ export default {
       immediate: true,
       handler(arr) {
         const map2 = arr.reduce((map, obj) => {
-          if (obj.name === 'Bypasses' && !Array.isArray(obj.value)) {
-            map[obj.name] = obj.value.split(' ') || [];
+          if (obj.name === "Bypasses" && !Array.isArray(obj.value)) {
+            map[obj.name] = obj.value.split(" ") || [];
           } else {
-            map[obj.name] = obj.value == null ? '' : obj.value;
+            map[obj.name] = obj.value == null ? "" : obj.value;
           }
           return map;
         }, {});
-        Vue.set(this, 'form', map2);
+        Vue.set(this, "form", map2);
       },
     },
   },
   mounted() {
-    if (!this.listeners) {
-      this.$store.dispatch('listener/getListeners');
-    }
-    if (!this.bypasses) {
-      this.$store.dispatch('bypass/getBypasses');
-    }
-    if (!this.malleableProfiles) {
-      this.$store.dispatch('malleable/getMalleableProfiles');
-    }
-    if (!this.credentials) {
-      this.$store.dispatch('credential/getCredentials');
-    }
+    this.agentStore.getAgents();
+    this.listenerStore.getListeners();
+    this.bypassStore.getBypasses();
+    this.malleableProfileStore.getMalleableProfiles();
+    this.credentialStore.getCredentials();
   },
   methods: {
     suggestedValuesForField(field) {
-      if (field.name === 'Listener') {
+      if (field.name === "Agent") {
+        return this.agents;
+      }
+      if (["Listener", "RedirectListener"].includes(field.name)) {
         return this.listeners;
-      } if (field.name === 'Bypasses') {
+      }
+      if (field.name === "Bypasses") {
         return this.bypasses;
-      } if (field.name === 'Profile') {
+      }
+      if (field.name === "Profile") {
         return this.malleableProfiles;
-      } if (field.name === 'CredID') {
+      }
+      if (field.name === "CredID") {
         return this.credentials;
       }
       return field.suggested_values;
     },
     strictForField(field) {
-      if (field.name === 'Listener') {
+      if (field.name === "Listener") {
         return true;
-      } if (field.name === 'Bypasses') {
+      }
+      if (field.name === "Bypasses") {
         return true;
-      } if (field.name === 'Profile') {
+      }
+      if (field.name === "Profile") {
         return true;
-      } if (field.name === 'CredID') {
+      }
+      if (field.name === "CredID") {
         return true;
       }
       return field.strict;
@@ -211,16 +237,15 @@ export default {
       return this.fields.find((el) => el.name === name);
     },
     fieldType(el) {
-      if (el.value_type === 'INTEGER') return 'number';
-      if (el.value_type === 'FLOAT') return 'float';
-      if (el.value_type === 'BOOLEAN') return 'boolean';
-      if (el.value_type === 'STRING') return 'string';
-      return 'string';
+      if (el.value_type === "INTEGER") return "number";
+      if (el.value_type === "FLOAT") return "float";
+      if (el.value_type === "BOOLEAN") return "boolean";
+      if (el.value_type === "STRING") return "string";
+      if (el.value_type === "FILE") return "file";
+      return "string";
     },
   },
 };
 </script>
 
-<style>
-
-</style>
+<style></style>

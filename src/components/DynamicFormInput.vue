@@ -2,10 +2,12 @@
 <template>
   <div>
     <v-switch
-      v-if="suggestedValues.length > 0
-        && strict
-        && suggestedValues.includes('True')
-        && suggestedValues.includes('False')"
+      v-if="
+        suggestedValues.length > 0 &&
+        strict &&
+        suggestedValues.includes('True') &&
+        suggestedValues.includes('False')
+      "
       v-model="internalValue"
       false-value="False"
       true-value="True"
@@ -22,6 +24,23 @@
       chips
     />
 
+    <file-input
+      v-else-if="type === 'file'"
+      v-model="internalValue"
+      :label="name"
+    />
+
+    <v-autocomplete
+      v-else-if="name === 'Agent'"
+      v-model="internalValue"
+      :items="suggestedValues"
+      :label="name"
+      outlined
+      dense
+      item-value="session_id"
+      item-text="name"
+    />
+
     <v-autocomplete
       v-else-if="name === 'CredID'"
       v-model="internalValue"
@@ -29,17 +48,21 @@
       :label="name"
       outlined
       dense
-      item-value="ID"
-      item-text="ID"
+      item-value="id"
+      item-text="id"
     >
-      <template
-        #item="data"
-      >
+      <template #item="data">
         <v-list-item-content>
           <v-list-item-title
-            v-text="truncate(`${data.item.username} ${data.item.domain} ${data.item.password}`)"
+            v-text="
+              truncate(
+                `${data.item.username}, ${data.item.domain}, ${data.item.password}`,
+              )
+            "
           />
-          <v-list-item-subtitle v-text="truncate(`${data.item.ID}, ${data.item.notes}`)" />
+          <v-list-item-subtitle
+            v-text="truncate(`id: ${data.item.id}, notes: ${data.item.notes}`)"
+          />
         </v-list-item-content>
       </template>
     </v-autocomplete>
@@ -75,7 +98,10 @@
 </template>
 
 <script>
+import FileInput from "@/components/FileInput.vue";
+
 export default {
+  components: { FileInput },
   props: {
     value: {
       type: [String, Array, Number],
@@ -99,7 +125,7 @@ export default {
     },
     type: {
       type: String,
-      default: 'text',
+      default: "text",
     },
   },
   data() {
@@ -109,7 +135,7 @@ export default {
   },
   watch: {
     internalValue(val) {
-      this.$emit('input', val);
+      this.$emit("input", val);
     },
   },
   methods: {
@@ -117,12 +143,10 @@ export default {
       if (msg) {
         return msg.length > 80 ? `${msg.substr(0, 80)}...` : msg;
       }
-      return '';
+      return "";
     },
   },
 };
 </script>
 
-<style>
-
-</style>
+<style></style>

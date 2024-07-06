@@ -1,13 +1,7 @@
 <template>
   <div class="p4">
-    <edit-page-top
-      :breads="breads"
-      :show-submit="true"
-      @submit="submit"
-    />
-    <h4 class="pl-4 pb-4">
-      Execute Module
-    </h4>
+    <edit-page-top :breads="breads" :show-submit="true" @submit="submit" />
+    <h4 class="pl-4 pb-4">Execute Module</h4>
     <v-autocomplete
       v-model="selectedAgents"
       dense
@@ -17,7 +11,7 @@
       placeholder="Agents"
       :items="agents"
       item-text="name"
-      item-value="name"
+      item-value="session_id"
     />
     <v-card>
       <agent-execute-module
@@ -33,12 +27,12 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-import AgentExecuteModule from '@/components/agents/AgentExecuteModule.vue';
-import EditPageTop from '@/components/EditPageTop.vue';
+import AgentExecuteModule from "@/components/agents/AgentExecuteModule.vue";
+import EditPageTop from "@/components/EditPageTop.vue";
+import { useAgentStore } from "@/stores/agent-module";
 
 export default {
-  name: 'ModuleExecute',
+  name: "ModuleExecute",
   components: {
     AgentExecuteModule,
     EditPageTop,
@@ -46,26 +40,30 @@ export default {
   data() {
     return {
       selectedAgents: [],
-      moduleName: '',
+      moduleName: "",
     };
   },
   computed: {
-    ...mapState({
-      agents: (state) => state.agent.agents
-        .filter((agent) => agent.archived === false && agent.stale === false),
-    }),
+    agentStore() {
+      return useAgentStore();
+    },
+    agents() {
+      return this.agentStore.agents.filter(
+        (agent) => agent.archived === false && agent.stale === false,
+      );
+    },
     breads() {
       return [
         {
-          text: 'Modules',
+          text: "Modules",
           disabled: false,
-          to: '/modules',
+          to: "/modules",
           exact: true,
         },
         {
           text: `${this.moduleName}`,
           disabled: true,
-          to: '/modules/execute',
+          to: "/modules/execute",
         },
       ];
     },
@@ -76,15 +74,14 @@ export default {
   },
   methods: {
     submit() {
-      // I don't love this but it works.
       this.$refs.executeform.create();
     },
     moduleChange(val) {
       this.moduleName = val;
-      this.$router.push({ name: 'moduleExecute', params: { id: val } });
+      this.$router.push({ name: "moduleExecute", params: { id: val } });
     },
     getAgents() {
-      this.$store.dispatch('agent/getAgents');
+      this.agentStore.getAgents();
     },
     clearAgents() {
       this.selectedAgents = [];
@@ -93,6 +90,4 @@ export default {
 };
 </script>
 
-<style>
-
-</style>
+<style></style>
